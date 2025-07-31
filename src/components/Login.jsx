@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 const Login = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  
   const [formData, setFormData] = useState({
-    email: '',
+    email: location.state?.email || '',
     password: '',
     rememberMe: false
   });
@@ -49,10 +52,29 @@ const Login = () => {
     
     if (Object.keys(newErrors).length === 0) {
       setIsLoading(true);
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      console.log('Login attempt:', formData);
-      setIsLoading(false);
+      
+      try {
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        console.log('Login attempt:', formData);
+        
+        // Navigate to dashboard after successful login
+        navigate('/dashboard', {
+          state: {
+            email: formData.email,
+            // In real app, this would come from API response
+            name: 'John Doe',
+            role: formData.email.includes('@iub.edu.bd') ? 
+              (formData.email.match(/^\d+@/) ? 'iub-student' : 'faculty') : 
+              'outside-iub'
+          }
+        });
+        
+      } catch (error) {
+        setErrors({ submit: 'Login failed. Please check your credentials.' });
+      } finally {
+        setIsLoading(false);
+      }
     } else {
       setErrors(newErrors);
     }

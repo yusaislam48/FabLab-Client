@@ -102,11 +102,12 @@ const OTPVerification = () => {
       // For demo purposes, accept any 6-digit code
       console.log('OTP Verification:', { email, otp: otpString, role: userRole });
       
-      // Redirect to login page or dashboard
-      navigate('/login', { 
+      // Redirect to dashboard after successful verification
+      navigate('/dashboard', { 
         state: { 
-          message: 'Email verified successfully! You can now log in.',
-          email: email 
+          email: email,
+          role: userRole,
+          name: location.state?.name || 'User'
         } 
       });
       
