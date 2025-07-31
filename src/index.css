@@ -46,7 +46,7 @@
   }
   
   .btn-tech-secondary {
-    @apply relative w-full px-6 py-3 bg-gradient-to-r from-slate-700 to-slate-600 hover:from-slate-600 hover:to-slate-500 text-slate-100 font-semibold rounded-xl transition-all duration-300 transform hover:scale-[1.02] border border-slate-500/30;
+    @apply relative w-auto px-4 py-2 bg-gradient-to-r from-slate-700 to-slate-600 hover:from-slate-600 hover:to-slate-500 text-slate-100 font-medium text-sm rounded-lg transition-all duration-300 transform hover:scale-[1.02] border border-slate-500/30;
   }
   
   .tech-link {
@@ -110,5 +110,29 @@
   .tech-checkbox:checked {
     @apply bg-blue-600 border-blue-600;
     background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='white' d='M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z'/%3e%3c/svg%3e");
+  }
+  
+  /* Range Slider Styles */
+  .range-slider {
+    background: linear-gradient(to right, #3b82f6 0%, #3b82f6 var(--range-progress, 0%), #475569 var(--range-progress, 0%), #475569 100%);
+  }
+  
+  .range-slider::-webkit-slider-thumb {
+    @apply appearance-none w-6 h-6 bg-blue-500 rounded-full cursor-pointer border-2 border-white shadow-lg;
+  }
+  
+  .range-slider::-moz-range-thumb {
+    @apply w-6 h-6 bg-blue-500 rounded-full cursor-pointer border-2 border-white shadow-lg;
+    border: none;
+  }
+  
+  .range-slider::-webkit-slider-thumb:hover {
+    @apply bg-blue-400 transform scale-110;
+    transition: all 0.2s ease;
+  }
+  
+  .range-slider::-moz-range-thumb:hover {
+    @apply bg-blue-400 transform scale-110;
+    transition: all 0.2s ease;
   }
 }

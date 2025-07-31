@@ -3,6 +3,9 @@ import Login from './components/Login'
 import Registration from './components/Registration'
 import OTPVerification from './components/OTPVerification'
 import Dashboard from './components/Dashboard'
+import Projects from './components/Projects'
+import NewProject from './components/NewProject'
+import ProjectEdit from './components/ProjectEdit'
 
 function App() {
   return (
@@ -13,6 +16,9 @@ function App() {
         <Route path="/register" element={<Registration />} />
         <Route path="/verify-email" element={<OTPVerification />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/projects" element={<Projects />} />
+        <Route path="/projects/new" element={<NewProject />} />
+        <Route path="/projects/:id/edit" element={<ProjectEdit />} />
         {/* Placeholder for forgot password route */}
         <Route path="/forgot-password" element={
           <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">

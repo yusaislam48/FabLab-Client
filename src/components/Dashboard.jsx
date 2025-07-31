@@ -253,14 +253,14 @@ const Dashboard = () => {
                 <div className="text-slate-400 text-xs">Request hardware</div>
               </Link>
 
-              <Link to="/training" className="group p-4 rounded-xl bg-slate-800/50 hover:bg-orange-500/20 border border-slate-700/50 hover:border-orange-400/50 transition-all duration-300">
-                <div className="text-orange-400 mb-2">
+              <Link to="/projects" className="group p-4 rounded-xl bg-slate-800/50 hover:bg-cyan-500/20 border border-slate-700/50 hover:border-cyan-400/50 transition-all duration-300">
+                <div className="text-cyan-400 mb-2">
                   <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                   </svg>
                 </div>
-                <div className="text-slate-200 font-medium">Training</div>
-                <div className="text-slate-400 text-xs">Learn new skills</div>
+                <div className="text-slate-200 font-medium">View Projects</div>
+                <div className="text-slate-400 text-xs">Manage all</div>
               </Link>
             </div>
           </div>
@@ -292,13 +292,21 @@ const Dashboard = () => {
                       <span className="text-slate-400 text-xs">{project.progress}%</span>
                     </div>
                   </div>
-                  <span className={`px-2 py-1 rounded-full text-xs ${
-                    project.status === 'Completed' ? 'bg-green-500/20 text-green-400' :
-                    project.status === 'In Progress' ? 'bg-blue-500/20 text-blue-400' :
-                    'bg-yellow-500/20 text-yellow-400'
-                  }`}>
-                    {project.status}
-                  </span>
+                  <div className="flex flex-col items-end gap-2">
+                    <span className={`px-2 py-1 rounded-full text-xs ${
+                      project.status === 'Completed' ? 'bg-green-500/20 text-green-400' :
+                      project.status === 'In Progress' ? 'bg-blue-500/20 text-blue-400' :
+                      'bg-yellow-500/20 text-yellow-400'
+                    }`}>
+                      {project.status}
+                    </span>
+                    <Link 
+                      to={`/projects/${project.id}/edit`}
+                      className="text-blue-400 hover:text-blue-300 text-xs transition-colors"
+                    >
+                      Update →
+                    </Link>
+                  </div>
                 </div>
               ))}
             </div>
