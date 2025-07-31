@@ -13,7 +13,7 @@ const NewProject = () => {
     equipment: [''],
     tags: [''],
     isPublic: true,
-    collaborators: ['']
+    collaborators: [{ email: '', role: 'Project Owner' }]
   });
 
   const [errors, setErrors] = useState({});
@@ -42,11 +42,27 @@ const NewProject = () => {
     }));
   };
 
-  const addArrayItem = (arrayName) => {
+  const handleCollaboratorChange = (index, field, value) => {
     setFormData(prev => ({
       ...prev,
-      [arrayName]: [...prev[arrayName], '']
+      collaborators: prev.collaborators.map((collaborator, i) => 
+        i === index ? { ...collaborator, [field]: value } : collaborator
+      )
     }));
+  };
+
+  const addArrayItem = (arrayName) => {
+    if (arrayName === 'collaborators') {
+      setFormData(prev => ({
+        ...prev,
+        collaborators: [...prev.collaborators, { email: '', role: '' }]
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [arrayName]: [...prev[arrayName], '']
+      }));
+    }
   };
 
   const removeArrayItem = (arrayName, index) => {
@@ -152,11 +168,21 @@ const NewProject = () => {
       <header className="tech-card m-4 mb-6">
         <div className="flex items-center justify-between p-6">
           <div className="flex items-center gap-4">
-            <Link to="/projects" className="text-slate-400 hover:text-slate-200 transition-colors">
+            <button 
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Back to Projects clicked!');
+                navigate('/projects');
+              }}
+              className="text-slate-400 hover:text-slate-200 transition-colors bg-transparent border-none p-2 cursor-pointer"
+              style={{ zIndex: 10 }}
+            >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
-            </Link>
+            </button>
             <div>
               <h1 className="text-2xl font-bold text-slate-100">Create New Project</h1>
               <p className="text-slate-400">Start your next fab lab creation</p>
@@ -301,16 +327,21 @@ const NewProject = () => {
                   )}
                 </div>
               ))}
-              <button
-                type="button"
-                onClick={() => addArrayItem('materials')}
-                className="flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors"
+              <div 
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  console.log('Add Material clicked!');
+                  addArrayItem('materials');
+                }}
+                className="flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors cursor-pointer p-3 rounded-xl border border-blue-400/20 hover:bg-blue-500/10 relative tech-card"
+                style={{ userSelect: 'none', zIndex: 50 }}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
                 Add Material
-              </button>
+              </div>
               {errors.materials && <p className="error-message">{errors.materials}</p>}
             </div>
           </div>
@@ -341,16 +372,21 @@ const NewProject = () => {
                   )}
                 </div>
               ))}
-              <button
-                type="button"
-                onClick={() => addArrayItem('equipment')}
-                className="flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors"
+              <div 
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  console.log('Add Equipment clicked!');
+                  addArrayItem('equipment');
+                }}
+                className="flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors cursor-pointer p-3 rounded-xl border border-blue-400/20 hover:bg-blue-500/10 relative tech-card"
+                style={{ userSelect: 'none', zIndex: 50 }}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
                 Add Equipment
-              </button>
+              </div>
               {errors.equipment && <p className="error-message">{errors.equipment}</p>}
             </div>
           </div>
@@ -381,17 +417,111 @@ const NewProject = () => {
                   )}
                 </div>
               ))}
-              <button
-                type="button"
-                onClick={() => addArrayItem('tags')}
-                className="flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors"
+              <div 
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  console.log('Add Tag clicked!');
+                  addArrayItem('tags');
+                }}
+                className="flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors cursor-pointer p-3 rounded-xl border border-blue-400/20 hover:bg-blue-500/10 relative tech-card"
+                style={{ userSelect: 'none', zIndex: 50 }}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
                 Add Tag
-              </button>
+              </div>
               {errors.tags && <p className="error-message">{errors.tags}</p>}
+            </div>
+          </div>
+
+          {/* Collaborators */}
+          <div>
+            <h2 className="text-xl font-bold text-slate-100 mb-6">Team Collaborators</h2>
+            <div className="space-y-4">
+              {formData.collaborators.map((collaborator, index) => (
+                <div key={index} className="p-4 border border-slate-700/50 rounded-xl bg-slate-800/30">
+                  <div className="flex items-center gap-2 mb-3">
+                    <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    <span className="text-slate-300 font-medium">
+                      {index === 0 ? 'Project Owner' : `Collaborator ${index}`}
+                    </span>
+                    {index === 0 && (
+                      <span className="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded">Owner</span>
+                    )}
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {/* Email Field */}
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                        </svg>
+                      </div>
+                      <input
+                        type="email"
+                        value={collaborator.email}
+                        onChange={(e) => handleCollaboratorChange(index, 'email', e.target.value)}
+                        placeholder={index === 0 ? "your@email.com (Project Owner)" : "collaborator@email.com"}
+                        className="input-tech text-sm"
+                      />
+                    </div>
+
+                    {/* Role Field */}
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 00-2 2H6a2 2 0 00-2-2V6m16 0v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2h16a2 2 0 012 2z" />
+                        </svg>
+                      </div>
+                      <input
+                        type="text"
+                        value={collaborator.role}
+                        onChange={(e) => handleCollaboratorChange(index, 'role', e.target.value)}
+                        placeholder={index === 0 ? "Project Owner" : "e.g., Hardware, Software, Design, etc."}
+                        className="input-tech text-sm"
+                        disabled={index === 0}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Remove Button - Only for non-owners */}
+                  {index > 0 && (
+                    <div className="flex justify-end mt-3">
+                      <button
+                        type="button"
+                        onClick={() => removeArrayItem('collaborators', index)}
+                        className="flex items-center gap-1 text-red-400 hover:text-red-300 text-sm transition-colors"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        Remove Collaborator
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))}
+              <div 
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  console.log('Add Collaborator clicked!');
+                  addArrayItem('collaborators');
+                }}
+                className="flex items-center gap-2 text-purple-400 hover:text-purple-300 transition-colors cursor-pointer p-3 rounded-xl border border-purple-400/20 hover:bg-purple-500/10 relative tech-card"
+                style={{ userSelect: 'none', zIndex: 50 }}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Add Collaborator
+              </div>
+              {errors.collaborators && <p className="error-message">{errors.collaborators}</p>}
             </div>
           </div>
 

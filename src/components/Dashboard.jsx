@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [user, setUser] = useState({
     name: location.state?.name || 'John Doe',
@@ -223,7 +224,17 @@ const Dashboard = () => {
           <div className="tech-card p-6">
             <h2 className="text-xl font-bold text-slate-100 mb-4">Quick Actions</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Link to="/booking" className="group p-4 rounded-xl bg-slate-800/50 hover:bg-blue-500/20 border border-slate-700/50 hover:border-blue-400/50 transition-all duration-300">
+              {/* Book Space */}
+              <button 
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  alert('Booking system coming soon!');
+                }}
+                className="group p-4 rounded-xl bg-slate-800/50 hover:bg-blue-500/20 border border-slate-700/50 hover:border-blue-400/50 transition-all duration-300 cursor-pointer text-left w-full"
+                style={{ zIndex: 10 }}
+              >
                 <div className="text-blue-400 mb-2">
                   <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -231,9 +242,20 @@ const Dashboard = () => {
                 </div>
                 <div className="text-slate-200 font-medium">Book Space</div>
                 <div className="text-slate-400 text-xs">Reserve workbench</div>
-              </Link>
+              </button>
 
-              <Link to="/projects/new" className="group p-4 rounded-xl bg-slate-800/50 hover:bg-green-500/20 border border-slate-700/50 hover:border-green-400/50 transition-all duration-300">
+              {/* New Project */}
+              <button 
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  console.log('New Project clicked!');
+                  navigate('/projects/new');
+                }}
+                className="group p-4 rounded-xl bg-slate-800/50 hover:bg-green-500/20 border border-slate-700/50 hover:border-green-400/50 transition-all duration-300 cursor-pointer text-left w-full"
+                style={{ zIndex: 10 }}
+              >
                 <div className="text-green-400 mb-2">
                   <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -241,19 +263,40 @@ const Dashboard = () => {
                 </div>
                 <div className="text-slate-200 font-medium">New Project</div>
                 <div className="text-slate-400 text-xs">Start creating</div>
-              </Link>
+              </button>
 
-              <Link to="/equipment/borrow" className="group p-4 rounded-xl bg-slate-800/50 hover:bg-purple-500/20 border border-slate-700/50 hover:border-purple-400/50 transition-all duration-300">
+              {/* Borrow Kit */}
+              <button 
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  alert('Equipment borrowing system coming soon!');
+                }}
+                className="group p-4 rounded-xl bg-slate-800/50 hover:bg-purple-500/20 border border-slate-700/50 hover:border-purple-400/50 transition-all duration-300 cursor-pointer text-left w-full"
+                style={{ zIndex: 10 }}
+              >
                 <div className="text-purple-400 mb-2">
                   <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                   </svg>
                 </div>
                 <div className="text-slate-200 font-medium">Borrow Kit</div>
                 <div className="text-slate-400 text-xs">Request hardware</div>
-              </Link>
+              </button>
 
-              <Link to="/projects" className="group p-4 rounded-xl bg-slate-800/50 hover:bg-cyan-500/20 border border-slate-700/50 hover:border-cyan-400/50 transition-all duration-300">
+              {/* View Projects */}
+              <button 
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  console.log('View Projects clicked!');
+                  navigate('/projects');
+                }}
+                className="group p-4 rounded-xl bg-slate-800/50 hover:bg-cyan-500/20 border border-slate-700/50 hover:border-cyan-400/50 transition-all duration-300 cursor-pointer text-left w-full"
+                style={{ zIndex: 10 }}
+              >
                 <div className="text-cyan-400 mb-2">
                   <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
@@ -261,7 +304,7 @@ const Dashboard = () => {
                 </div>
                 <div className="text-slate-200 font-medium">View Projects</div>
                 <div className="text-slate-400 text-xs">Manage all</div>
-              </Link>
+              </button>
             </div>
           </div>
 
@@ -269,7 +312,19 @@ const Dashboard = () => {
           <div className="tech-card p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold text-slate-100">Recent Projects</h2>
-              <Link to="/projects" className="tech-link text-sm">View All</Link>
+              <button 
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  console.log('View All clicked!');
+                  navigate('/projects');
+                }} 
+                className="tech-link text-sm cursor-pointer hover:underline bg-transparent border-none p-0"
+                style={{ zIndex: 10 }}
+              >
+                View All
+              </button>
             </div>
             <div className="space-y-4">
               {dashboardData.recentProjects.map((project) => (
@@ -300,12 +355,19 @@ const Dashboard = () => {
                     }`}>
                       {project.status}
                     </span>
-                    <Link 
-                      to={`/projects/${project.id}/edit`}
-                      className="text-blue-400 hover:text-blue-300 text-xs transition-colors"
+                    <button 
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log(`Update project ${project.id} clicked!`);
+                        navigate(`/projects/${project.id}/edit`);
+                      }}
+                      className="text-blue-400 hover:text-blue-300 text-xs transition-colors cursor-pointer bg-transparent border-none p-1"
+                      style={{ zIndex: 10 }}
                     >
                       Update →
-                    </Link>
+                    </button>
                   </div>
                 </div>
               ))}
