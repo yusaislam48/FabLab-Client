@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Registration = () => {
+  const navigate = useNavigate();
+  
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
     confirmPassword: '',
-    role: 'outside-iub'
+    role: 'outside-iub',
+    rfidNumber: ''
   });
 
   const [errors, setErrors] = useState({});
@@ -43,8 +46,10 @@ const Registration = () => {
     if (name === 'role') {
       if (value === 'iub-student' || value === 'faculty') {
         newFormData.email = '';
+        newFormData.rfidNumber = '';
       } else if (value === 'outside-iub') {
         newFormData.email = '';
+        newFormData.rfidNumber = '';
       }
     }
 
@@ -59,6 +64,13 @@ const Registration = () => {
         const cleanId = value.replace(/[^a-zA-Z0-9]/g, '');
         newFormData.email = cleanId;
       }
+    }
+
+    // Handle RFID number input for IUB users
+    if (name === 'rfidNumber' && (formData.role === 'iub-student' || formData.role === 'faculty')) {
+      // Only allow numbers, maximum 10 digits
+      const numericOnly = value.replace(/\D/g, '').slice(0, 10);
+      newFormData.rfidNumber = numericOnly;
     }
 
     setFormData(newFormData);
@@ -90,6 +102,15 @@ const Registration = () => {
         newErrors.email = 'Please enter a valid faculty ID';
       }
     }
+
+    // RFID Number validation for IUB members
+    if (formData.role === 'iub-student' || formData.role === 'faculty') {
+      if (!formData.rfidNumber) {
+        newErrors.rfidNumber = 'RFID Number is required';
+      } else if (!/^\d{10}$/.test(formData.rfidNumber)) {
+        newErrors.rfidNumber = 'RFID Number must be exactly 10 digits';
+      }
+    }
     
     if (!formData.password) {
       newErrors.password = 'Password is required';
@@ -114,14 +135,32 @@ const Registration = () => {
     
     if (Object.keys(newErrors).length === 0) {
       setIsLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      // Create the final form data with full email
-      const finalFormData = {
-        ...formData,
-        email: getFullEmail()
-      };
-      console.log('Registration attempt:', finalFormData);
-      setIsLoading(false);
+      
+      try {
+        // Create the final form data with full email
+        const finalFormData = {
+          ...formData,
+          email: getFullEmail()
+        };
+        
+        // Simulate API call for registration
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        console.log('Registration attempt:', finalFormData);
+        
+        // Navigate to OTP verification page
+        navigate('/verify-email', {
+          state: {
+            email: finalFormData.email,
+            role: formData.role,
+            name: formData.name
+          }
+        });
+        
+      } catch (error) {
+        setErrors({ submit: 'Registration failed. Please try again.' });
+      } finally {
+        setIsLoading(false);
+      }
     } else {
       setErrors(newErrors);
     }
@@ -317,6 +356,52 @@ const Registration = () => {
               </p>
             )}
           </div>
+
+          {/* RFID Number Field - Only for IUB Students and Faculty */}
+          {(formData.role === 'iub-student' || formData.role === 'faculty') && (
+            <div className="relative">
+              <div className="relative">
+                <input
+                  type="text"
+                  id="rfidNumber"
+                  name="rfidNumber"
+                  value={formData.rfidNumber}
+                  onChange={handleChange}
+                  onFocus={() => setFocusedField('rfidNumber')}
+                  onBlur={() => setFocusedField('')}
+                  className={`input-tech ${errors.rfidNumber ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' : ''}`}
+                  placeholder="Enter your 10-digit RFID number"
+                  maxLength="10"
+                />
+                <div className="absolute left-3 top-3.5 w-5 h-5 text-slate-400">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                  </svg>
+                </div>
+                {focusedField === 'rfidNumber' && (
+                  <div className="absolute right-3 top-3.5 w-5 h-5 text-blue-400 animate-pulse">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  </div>
+                )}
+              </div>
+              {errors.rfidNumber && (
+                <p className="error-message">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  {errors.rfidNumber}
+                </p>
+              )}
+              <p className="text-slate-400 text-xs mt-1 flex items-center gap-1">
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Found on the back side of your ID card (e.g., 0000067897)
+              </p>
+            </div>
+          )}
 
           {/* Password Field */}
           <div className="relative">

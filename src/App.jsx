@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate, Link } from 'react-router-dom'
 import Login from './components/Login'
 import Registration from './components/Registration'
+import OTPVerification from './components/OTPVerification'
 
 function App() {
   return (
@@ -9,6 +10,7 @@ function App() {
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Registration />} />
+        <Route path="/verify-email" element={<OTPVerification />} />
         {/* Placeholder for forgot password route */}
         <Route path="/forgot-password" element={
           <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
