@@ -365,7 +365,8 @@ const Projects = () => {
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    alert('View Details functionality coming soon!');
+                    console.log(`View details for project ${project.id} clicked!`);
+                    navigate(`/projects/${project.id}`);
                   }}
                   className="flex-1 btn-tech-secondary py-2 text-sm text-center"
                   style={{ zIndex: 10 }}

@@ -20,6 +20,8 @@ const ProjectEdit = () => {
 
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [isUploadingImages, setIsUploadingImages] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const statuses = ['Planning', 'In Progress', 'Completed', 'On Hold'];
 
@@ -132,6 +134,113 @@ const ProjectEdit = () => {
     return newErrors;
   };
 
+  // Image handling functions
+  const handleImageUpload = async (files) => {
+    if (!files || files.length === 0) return;
+
+    // Validate file sizes and types
+    const validFiles = files.filter(file => {
+      const isValidType = file.type.startsWith('image/');
+      const isValidSize = file.size <= 5 * 1024 * 1024; // 5MB limit
+      
+      if (!isValidType) {
+        alert(`${file.name} is not a valid image file.`);
+        return false;
+      }
+      if (!isValidSize) {
+        alert(`${file.name} is larger than 5MB.`);
+        return false;
+      }
+      return true;
+    });
+
+    if (validFiles.length === 0) return;
+
+    setIsUploadingImages(true);
+    setUploadProgress(0);
+
+    try {
+      const imagePromises = validFiles.map((file, index) => {
+        return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            resolve({
+              file,
+              name: file.name,
+              size: file.size,
+              type: file.type,
+              preview: e.target.result,
+              caption: '',
+              uploadedAt: new Date().toISOString()
+            });
+          };
+          reader.readAsDataURL(file);
+        });
+      });
+
+      // Simulate upload progress
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => {
+          if (prev >= 90) {
+            clearInterval(progressInterval);
+            return 90;
+          }
+          return prev + 10;
+        });
+      }, 200);
+
+      const uploadedImages = await Promise.all(imagePromises);
+      
+      // Complete the progress
+      setUploadProgress(100);
+      
+      // Add images to form data
+      setFormData(prev => ({
+        ...prev,
+        images: [...prev.images, ...uploadedImages]
+      }));
+
+      // Clear the file input
+      const fileInput = document.getElementById('imageUpload');
+      if (fileInput) fileInput.value = '';
+
+      setTimeout(() => {
+        setIsUploadingImages(false);
+        setUploadProgress(0);
+      }, 500);
+
+    } catch (error) {
+      console.error('Error uploading images:', error);
+      alert('Failed to upload images. Please try again.');
+      setIsUploadingImages(false);
+      setUploadProgress(0);
+    }
+  };
+
+  const removeImage = (index) => {
+    setFormData(prev => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index)
+    }));
+  };
+
+  const updateImageCaption = (index, caption) => {
+    setFormData(prev => ({
+      ...prev,
+      images: prev.images.map((img, i) => 
+        i === index ? { ...img, caption } : img
+      )
+    }));
+  };
+
+  const formatFileSize = (bytes) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = validateForm();
@@ -145,6 +254,13 @@ const ProjectEdit = () => {
           ...formData,
           completedTasks: formData.completedTasks.filter(t => t.trim()),
           nextSteps: formData.nextSteps.filter(s => s.trim()),
+          images: formData.images.map(img => ({
+            name: img.name,
+            size: img.size,
+            type: img.type,
+            caption: img.caption || '',
+            uploadedAt: img.uploadedAt
+          })),
           lastUpdated: new Date().toISOString().split('T')[0],
           updateTimestamp: new Date().toISOString()
         };
@@ -503,6 +619,138 @@ const ProjectEdit = () => {
                   className="input-tech"
                   placeholder="Share what you've learned or discovered during this update..."
                 />
+              </div>
+
+              {/* Photo Updates */}
+              <div>
+                <h3 className="text-lg font-bold text-slate-100 mb-4 flex items-center gap-2">
+                  <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 002 2v12a2 2 0 002 2z" />
+                  </svg>
+                  Photo Updates
+                </h3>
+                
+                {/* Image Upload Area */}
+                <div className="space-y-4">
+                  {/* Drag & Drop Upload Zone */}
+                  <div 
+                    className="relative border-2 border-dashed border-slate-600 rounded-xl p-8 text-center hover:border-blue-400/50 transition-colors group"
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      e.currentTarget.classList.add('border-blue-400');
+                    }}
+                    onDragLeave={(e) => {
+                      e.preventDefault();
+                      e.currentTarget.classList.remove('border-blue-400');
+                    }}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      e.currentTarget.classList.remove('border-blue-400');
+                      const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('image/'));
+                      handleImageUpload(files);
+                    }}
+                  >
+                    <input
+                      type="file"
+                      id="imageUpload"
+                      multiple
+                      accept="image/*"
+                      onChange={(e) => handleImageUpload(Array.from(e.target.files))}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    />
+                    
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="w-16 h-16 bg-slate-700 rounded-full flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
+                        <svg className="w-8 h-8 text-slate-400 group-hover:text-blue-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-slate-200 font-medium mb-1">Upload Progress Photos</p>
+                        <p className="text-slate-400 text-sm">Drag & drop images here, or click to select</p>
+                        <p className="text-slate-500 text-xs mt-2">Supports: JPG, PNG, WebP (Max 5MB each)</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Image Previews */}
+                  {formData.images.length > 0 && (
+                    <div>
+                      <h4 className="text-slate-300 font-medium mb-3 flex items-center gap-2">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        Uploaded Images ({formData.images.length})
+                      </h4>
+                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        {formData.images.map((image, index) => (
+                          <div key={index} className="relative group">
+                            <div className="aspect-square bg-slate-700 rounded-lg overflow-hidden border border-slate-600">
+                              {image.preview ? (
+                                <img
+                                  src={image.preview}
+                                  alt={`Upload ${index + 1}`}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center">
+                                  <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                  </svg>
+                                </div>
+                              )}
+                            </div>
+                            
+                            {/* Image Info Overlay */}
+                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex flex-col justify-between p-2">
+                              <button
+                                type="button"
+                                onClick={() => removeImage(index)}
+                                className="self-end w-8 h-8 bg-red-500 hover:bg-red-400 rounded-full flex items-center justify-center transition-colors"
+                              >
+                                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                              </button>
+                              
+                              <div className="bg-black/70 rounded p-2">
+                                <p className="text-white text-xs font-medium truncate">{image.name}</p>
+                                <p className="text-slate-300 text-xs">{formatFileSize(image.size)}</p>
+                              </div>
+                            </div>
+
+                            {/* Caption Input */}
+                            <div className="mt-2">
+                              <input
+                                type="text"
+                                value={image.caption || ''}
+                                onChange={(e) => updateImageCaption(index, e.target.value)}
+                                placeholder="Add caption..."
+                                className="w-full px-2 py-1 text-xs bg-slate-800/50 border border-slate-600/50 rounded text-slate-200 placeholder-slate-500 focus:border-blue-400/50 focus:outline-none"
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Upload Progress */}
+                  {isUploadingImages && (
+                    <div className="flex items-center gap-3 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                      <div className="w-5 h-5 border-2 border-blue-400/20 border-t-blue-400 rounded-full animate-spin"></div>
+                      <div className="flex-1">
+                        <p className="text-blue-400 text-sm font-medium">Uploading images...</p>
+                        <div className="w-full bg-slate-700 rounded-full h-2 mt-1">
+                          <div 
+                            className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                            style={{ width: `${uploadProgress}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Submit Buttons */}
