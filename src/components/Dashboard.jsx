@@ -272,7 +272,8 @@ const Dashboard = () => {
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  alert('Equipment borrowing system coming soon!');
+                  console.log('Borrow Kit clicked!');
+                  navigate('/borrow-kit');
                 }}
                 className="group p-4 rounded-xl bg-slate-800/50 hover:bg-purple-500/20 border border-slate-700/50 hover:border-purple-400/50 transition-all duration-300 cursor-pointer text-left w-full"
                 style={{ zIndex: 10 }}

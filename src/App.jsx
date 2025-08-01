@@ -8,6 +8,7 @@ import NewProject from './components/NewProject'
 import ProjectEdit from './components/ProjectEdit'
 import ProjectDetails from './components/ProjectDetails'
 import FabBooking from './components/FabBooking'
+import BorrowKit from './components/BorrowKit'
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/projects/:id" element={<ProjectDetails />} />
         <Route path="/projects/:id/edit" element={<ProjectEdit />} />
         <Route path="/booking" element={<FabBooking />} />
+        <Route path="/borrow-kit" element={<BorrowKit />} />
         {/* Placeholder for forgot password route */}
         <Route path="/forgot-password" element={
           <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
