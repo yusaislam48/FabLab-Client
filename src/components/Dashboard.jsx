@@ -230,7 +230,8 @@ const Dashboard = () => {
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  alert('Booking system coming soon!');
+                  console.log('Book Space clicked!');
+                  navigate('/booking');
                 }}
                 className="group p-4 rounded-xl bg-slate-800/50 hover:bg-blue-500/20 border border-slate-700/50 hover:border-blue-400/50 transition-all duration-300 cursor-pointer text-left w-full"
                 style={{ zIndex: 10 }}

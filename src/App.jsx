@@ -6,6 +6,7 @@ import Dashboard from './components/Dashboard'
 import Projects from './components/Projects'
 import NewProject from './components/NewProject'
 import ProjectEdit from './components/ProjectEdit'
+import FabBooking from './components/FabBooking'
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/projects" element={<Projects />} />
         <Route path="/projects/new" element={<NewProject />} />
         <Route path="/projects/:id/edit" element={<ProjectEdit />} />
+        <Route path="/booking" element={<FabBooking />} />
         {/* Placeholder for forgot password route */}
         <Route path="/forgot-password" element={
           <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
