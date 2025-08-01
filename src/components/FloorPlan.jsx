@@ -400,8 +400,8 @@ function FloorPlan({ selectedSeats, onSeatSelect, disabled = false }) {
                     stroke={seatStroke}
                     strokeWidth="2"
                     filter={`url(#seat-glow-${seat.id})`}
-                    className={`cursor-pointer transition-all duration-300 hover:scale-110 ${
-                      disabled ? 'cursor-not-allowed opacity-50' : 'hover:brightness-110'
+                    className={`cursor-pointer transition-all duration-300 hover:brightness-125 hover:saturate-110 ${
+                      disabled ? 'cursor-not-allowed opacity-50' : ''
                     }`}
                     onClick={() => handleSeatClick(seat.id)}
                     onMouseEnter={() => setHoveredSeat(seat)}
@@ -538,8 +538,8 @@ function FloorPlan({ selectedSeats, onSeatSelect, disabled = false }) {
                     stroke={seatStroke}
                     strokeWidth="2"
                     filter={`url(#workstation-glow-${seatId})`}
-                    className={`cursor-pointer transition-all duration-300 hover:scale-110 ${
-                      disabled ? 'cursor-not-allowed opacity-50' : 'hover:brightness-110'
+                    className={`cursor-pointer transition-all duration-300 hover:brightness-125 hover:saturate-110 ${
+                      disabled ? 'cursor-not-allowed opacity-50' : ''
                     }`}
                     onClick={() => handleSeatClick(seatId)}
                     onMouseEnter={() => setHoveredSeat({ id: seatId, name: `Workstation ${seatId.split('-')[0]}`, type: 'chair' })}
