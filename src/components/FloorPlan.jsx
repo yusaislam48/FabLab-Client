@@ -303,16 +303,7 @@ function FloorPlan({ selectedSeats, onSeatSelect, disabled = false }) {
             <path d="M8 8h8M8 12h6M8 16h4"/>
           </svg>
         )
-      case 'workstation':
-        return (
-          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M4 2v6h16V2c0-1.1-.9-2-2-2H6c-1.1 0-2 .9-2 2z"/>
-            <path d="M3 9v8c0 1.1.9 2 2 2h3v4h8v-4h3c1.1 0 2-.9 2-2V9H3z"/>
-            <rect x="10" y="12" width="4" height="2" rx="1"/>
-            <circle cx="7" cy="13" r="1"/>
-            <circle cx="17" cy="13" r="1"/>
-          </svg>
-        )
+
       default:
         return (
           <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
@@ -438,50 +429,80 @@ function FloorPlan({ selectedSeats, onSeatSelect, disabled = false }) {
         {/* Workstation Clusters (cross-shaped tables) */}
         {WORKSTATION_CLUSTERS.map((cluster) => (
           <g key={cluster.id}>
-            {/* Central collaborative table with gradient fill */}
+            {/* Professional table design */}
             <defs>
               <linearGradient id={`table-gradient-${cluster.id}`} x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style={{ stopColor: 'rgba(236, 72, 153, 0.8)', stopOpacity: 1 }} />
-                <stop offset="100%" style={{ stopColor: 'rgba(190, 24, 93, 0.9)', stopOpacity: 1 }} />
+                <stop offset="0%" style={{ stopColor: 'rgba(139, 69, 19, 0.9)', stopOpacity: 1 }} />
+                <stop offset="100%" style={{ stopColor: 'rgba(101, 67, 33, 1)', stopOpacity: 1 }} />
               </linearGradient>
               <filter id={`table-shadow-${cluster.id}`} x="-50%" y="-50%" width="200%" height="200%">
-                <feDropShadow dx="2" dy="2" stdDeviation="3" floodColor="rgba(3, 3, 3, 0.3)"/>
+                <feDropShadow dx="2" dy="2" stdDeviation="3" floodColor="rgba(0,0,0,0.4)"/>
               </filter>
             </defs>
             
+            {/* Table surface (wooden brown) */}
             <rect
-              x={cluster.x - 12}
-              y={cluster.y - 12}
-              width="24"
-              height="24"
+              x={cluster.x - 15}
+              y={cluster.y - 15}
+              width="30"
+              height="30"
               fill={`url(#table-gradient-${cluster.id})`}
-              stroke="rgba(190, 24, 93, 0.8)"
-              strokeWidth="1.5"
+              stroke="rgba(101, 67, 33, 1)"
+              strokeWidth="2"
               rx="4"
               filter={`url(#table-shadow-${cluster.id})`}
               className="transition-all duration-300"
             />
             
-            {/* Table surface detail */}
+            {/* Table legs (4 corners) */}
+            <rect x={cluster.x - 13} y={cluster.y - 13} width="3" height="3" fill="rgba(69, 39, 19, 1)" rx="1"/>
+            <rect x={cluster.x + 10} y={cluster.y - 13} width="3" height="3" fill="rgba(69, 39, 19, 1)" rx="1"/>
+            <rect x={cluster.x - 13} y={cluster.y + 10} width="3" height="3" fill="rgba(69, 39, 19, 1)" rx="1"/>
+            <rect x={cluster.x + 10} y={cluster.y + 10} width="3" height="3" fill="rgba(69, 39, 19, 1)" rx="1"/>
+            
+            {/* Table surface wood grain effect */}
             <rect
-              x={cluster.x - 8}
-              y={cluster.y - 8}
-              width="16"
-              height="16"
-              fill="rgba(255, 255, 255, 0.1)"
-              rx="2"
+              x={cluster.x - 12}
+              y={cluster.y - 12}
+              width="24"
+              height="24"
+              fill="rgba(160, 82, 45, 0.3)"
+              rx="3"
+              className="pointer-events-none"
+            />
+            <rect
+              x={cluster.x - 10}
+              y={cluster.y - 2}
+              width="20"
+              height="1"
+              fill="rgba(101, 67, 33, 0.4)"
+              className="pointer-events-none"
+            />
+            <rect
+              x={cluster.x - 10}
+              y={cluster.y + 2}
+              width="20"
+              height="1"
+              fill="rgba(101, 67, 33, 0.4)"
               className="pointer-events-none"
             />
             
             {/* Professional workstation chairs around the table */}
             {cluster.seats.map((seatId, index) => {
               const positions = [
-                { x: cluster.x, y: cluster.y - 20 }, // top
-                { x: cluster.x + 20, y: cluster.y }, // right
-                { x: cluster.x, y: cluster.y + 20 }, // bottom
-                { x: cluster.x - 20, y: cluster.y }, // left
+                { x: cluster.x, y: cluster.y - 25 }, // top
+                { x: cluster.x + 25, y: cluster.y }, // right
+                { x: cluster.x, y: cluster.y + 25 }, // bottom
+                { x: cluster.x - 25, y: cluster.y }, // left
               ]
               const pos = positions[index]
+              const status = getSeatStatus(seatId)
+              const seatFill = status === 'selected' ? 'rgba(59, 130, 246, 0.9)' : 
+                              status === 'occupied' ? 'rgba(239, 68, 68, 0.8)' : 
+                              'rgba(34, 197, 94, 0.8)'
+              const seatStroke = status === 'selected' ? 'rgba(59, 130, 246, 1)' : 
+                                status === 'occupied' ? 'rgba(239, 68, 68, 1)' : 
+                                'rgba(34, 197, 94, 1)'
               
               return (
                 <g key={seatId}>
@@ -495,22 +516,37 @@ function FloorPlan({ selectedSeats, onSeatSelect, disabled = false }) {
                     className="pointer-events-none"
                   />
                   
-                  {/* Main chair seat */}
+                  {/* Chair glow effect */}
+                  <defs>
+                    <filter id={`workstation-glow-${seatId}`} x="-50%" y="-50%" width="200%" height="200%">
+                      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                      <feMerge> 
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
+                  </defs>
+                  
+                  {/* Main chair seat - same colors as zone chairs */}
                   <rect
                     x={pos.x - 7}
                     y={pos.y - 7}
                     width="14"
                     height="14"
                     rx="2"
-                    className={`${getSeatColor(seatId)} cursor-pointer transition-all duration-300 hover:scale-110 hover:brightness-110 ${
-                      disabled ? 'cursor-not-allowed opacity-50' : 'shadow-lg'
+                    fill={seatFill}
+                    stroke={seatStroke}
+                    strokeWidth="2"
+                    filter={`url(#workstation-glow-${seatId})`}
+                    className={`cursor-pointer transition-all duration-300 hover:scale-110 ${
+                      disabled ? 'cursor-not-allowed opacity-50' : 'hover:brightness-110'
                     }`}
                     onClick={() => handleSeatClick(seatId)}
-                    onMouseEnter={() => setHoveredSeat({ id: seatId, name: `Professional Workstation ${seatId.split('-')[0]}`, type: 'workstation' })}
+                    onMouseEnter={() => setHoveredSeat({ id: seatId, name: `Workstation ${seatId.split('-')[0]}`, type: 'chair' })}
                     onMouseLeave={() => setHoveredSeat(null)}
                   />
                   
-                  {/* Chair icon with better positioning */}
+                  {/* Chair icon - same as all other chairs */}
                   <foreignObject
                     x={pos.x - 5}
                     y={pos.y - 5}
